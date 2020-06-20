@@ -1,29 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1 class="display-5 mt-4">Летим из <span data-test="from">{{ departure_direction }}</span></h1>
-    <p class="mb-4">Найдено <span data-test="tourcount">{{ tour_counter }}</span> тура, от <span
-            data-test="pricemin">{{ min_price }}</span> до <span data-test="pricemax">{{ max_price }}</span> и от <span
-            data-test="nightsmax">{{ min_nights }}</span> ночей до <span data-test="nightsmax">{{ max_nights }}</span>
-        ночей</p>
-    <!-- HERO -->
 
-
-    <!-- CARDS -->
-
-    <div class="row mt-5" data-test="cards">
-        {% for tour in tours %}
-            <div class="col-4" data-test="card">
-                <div class="card mb-3">
-                    <img src='{{ tour.picture }}'
-                         class="card-img-top img-fluid" data-test="picture" style="height: 15vw">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ tour.title }}</h5>
-                        <p class="card-text">К{{ tour.description }}</p>
-                        <a href="/tour/{{ tour.id }}" class="btn btn-sm btn-primary" data-test="tourlink">Подробнее</a>
+    <main class="container mt-3">
+        <h1 class="display-5 mt-4">Летим {{ departure_direction }}</h1>
+        <p class="mb-4">Найдено {{ tour_counter }} туров, от {{ min_price }} до {{ max_price }} и от {{ min_nights }}
+            ночей до {{ max_nights }} ночей</p>
+        <!-- CARDS -->
+        <div class="row mt-5">
+            {% for tour in tours %}
+                <div class="col-4">
+                    <div class="card mb-4">
+                        <img src='{{ tour.picture }}' class="card-img-top img-fluid" alt="" style="height: 15vw">
+                        <div class="card-body">
+                            <h2 class="h5 card-title">{{ tour.title }}</h2>
+                            <p class="card-text">{{ tour.description }}</p>
+                            <a href="/tour/{{ tour.id }}" class="btn btn-sm btn-primary">Подробнее</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
+    </main>
 {% endblock %}
