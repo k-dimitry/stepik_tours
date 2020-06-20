@@ -76,6 +76,7 @@ class TourView(View):
     def get(self, request, id):
         context = {
             **TOURS.get(id),
-            **{"departure": data.departures.get(data.tours.get(id).get("departure"))},
+            **{"departure": data.departures.get(data.tours.get(id).get("departure")),
+               'stars_count': int(data.tours.get(id).get("stars")) * "★"},
         }
         return render(request, 'tour.html', context=context)
