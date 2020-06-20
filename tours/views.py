@@ -1,6 +1,12 @@
+from random import shuffle
+
 from django.http import HttpResponseNotFound, HttpResponseServerError
 from django.shortcuts import render
 from django.views import View
+
+import data
+
+TOURS = data.tours
 
 
 def custom_handler404(request, exception):
@@ -14,14 +20,62 @@ def custom_handler500(request):
 
 class MainView(View):
     def get(self, request):
-        return render(request, 'index.html')
+        random_tours = list(range(1, 17))
+        shuffle(random_tours)
+        random_tours = random_tours[:6]
+        lst_of_tours = [{**TOURS.get(num), **{"id": num}} for num in random_tours]
+        context = {
+            'title': data.title,
+            'subtitle': data.subtitle,
+            'description': data.description,
+            'departures': data.departures,
+            'random_tours': lst_of_tours
+        }
+        return render(request, 'index.html', context=context)
 
 
 class DepartureView(View):
     def get(self, request, departure):
-        return render(request, 'departure.html')
+        tours = []
+        tour_counter = 0
+        max_nights = float("-inf")
+        min_nights = float("inf")
+        max_price = float("-inf")
+        min_price = float("inf")
+        for key, value in TOURS.items():
+            if value.get("departure") == departure:
+                tours.append({**value, **{"id": key}})
+                tour_counter += 1
+                nights = value.get("nights")
+                if nights > max_nights:
+                    max_nights = nights
+                if nights < min_nights:
+                    min_nights = nights
+                price = value.get("price")
+                if price > max_price:
+                    max_price = price
+                if price < min_price:
+                    min_price = price
+        context = {
+            'tours': tours,
+            'title': data.title,
+            'subtitle': data.subtitle,
+            'description': data.description,
+            'departure_direction': data.departures.get(departure),
+            'tour_counter': tour_counter,
+            "max_nights": max_nights,
+            "min_nights": min_nights,
+            "max_price": max_price,
+            "min_price": min_price
+
+        }
+        return render(request, 'departure.html', context=context)
 
 
 class TourView(View):
     def get(self, request, id):
-        return render(request, 'tour.html')
+        context = {
+            **TOURS.get(id),
+            **{"departure": data.departures.get(data.tours.get(id).get("departure"))},
+        }
+        return render(request, 'tour.html', context=context)
